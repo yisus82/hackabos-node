@@ -1,0 +1,30 @@
+{
+  "name": "hackabos-node",
+  "version": "1.0.0",
+  "description": "Hack-a-BOS Bootcamp Node module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yisus82/hackabos-node.git"
+  },
+  "keywords": [],
+  "author": "Jesús Ángel Pérez-Roca Fernández",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yisus82/hackabos-node/issues"
+  },
+  "homepage": "https://github.com/yisus82/hackabos-node#readme",
+  "devDependencies": {
+    "dotenv": "^6.2.0",
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-security": "^1.4.0",
+    "nodemon": "^1.18.10"
+  }
+}
