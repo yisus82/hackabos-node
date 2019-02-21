@@ -13,6 +13,7 @@
   },
   "plugins": ["security"],
   "rules": {
+    "no-console": "off",
     "space-before-function-paren": ["error", "never"],
     "no-underscore-dangle": [
       "error",
