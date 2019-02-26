@@ -1,6 +1,20 @@
 'use strict';
 
 const Joi = require('joi');
+const bcrypt = require('bcrypt');
+const uuidv4 = require('uuid/v4');
+const mysql = require('mysql2/promise');
+
+// create the connection to database
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'socialnetwork',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+});
 
 async function validateSchema(payload) {
   /**
@@ -34,6 +48,7 @@ async function create(req, res, next) {
     await validateSchema(accountData);
   } catch (e) {
     // Create validation error
+    return res.status(400).send(e);
   }
 
   const { email, password, fullName } = accountData;
@@ -43,21 +58,45 @@ async function create(req, res, next) {
      * TODO: Insert user into MySQL
      *  hash the password using bcrypt library
      */
-    const securePassword = 'TODO'; /* USE BCRYPT TO CIPHER THE PASSWORD */
+    const securePassword = await bcrypt.hash(password, 10);
+    const uuid = uuidv4();
+    const createdAt = new Date()
+      .toISOString()
+      .substring(0, 19)
+      .replace('T', ' ');
 
     /**
      * TODO: Insert user into mysql and get the user uuid
      */
-
-    /**
-     * TODO: CREATE VERIFICATION CODE AND INSERT IT INTO MySQL
-     */
-    const verificationCode =      'TODO: use uuid library to generate a uuid version 4';
+    try {
+      await pool.query('INSERT INTO users SET ?', {
+        uuid,
+        email,
+        password: securePassword,
+        created_at: createdAt,
+      });
+    } catch (e) {
+      return res.status(409).send(e.message);
+    }
 
     /**
      * TODO: Tell user the account was created
      */
     res.status(204).json();
+
+    /**
+     * TODO: CREATE VERIFICATION CODE AND INSERT IT INTO MySQL
+     */
+    const verificationCode = uuidv4();
+    try {
+      await pool.query('INSERT INTO users_activation SET ?', {
+        user_uuid: uuid,
+        verification_code: verificationCode,
+        created_at: createdAt,
+      });
+    } catch (e) {
+      return res.status(409).send(e.message);
+    }
 
     // send email
     try {
