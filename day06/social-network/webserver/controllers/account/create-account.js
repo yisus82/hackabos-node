@@ -6,7 +6,7 @@ const sendgridMail = require('@sendgrid/mail');
 const uuidV4 = require('uuid/v4');
 const mysqlPool = require('../../../databases/mysql-pool');
 
-sendgridMail.setApiKey(process.env.SENGRID_API_KEY);
+sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 /**
  * Insert the user into the database generating an uuid and calculating the bcrypt password
