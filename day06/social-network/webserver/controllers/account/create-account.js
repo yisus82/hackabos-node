@@ -5,6 +5,7 @@ const Joi = require('joi');
 const sendgridMail = require('@sendgrid/mail');
 const uuidV4 = require('uuid/v4');
 const mysqlPool = require('../../../databases/mysql-pool');
+const UserModel = require('../../../models/user-model');
 
 sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -15,7 +16,8 @@ sendgridMail.setApiKey(process.env.SENDGRID_API_KEY);
  * @return {String} uuid
  */
 async function insertUserIntoDatabase(email, password) {
-  const securePassword = await bcrypt.hash(password, 10);
+  const saltRounds = parseInt(process.env.AUTH_BCRYPT_SALT_ROUNDS, 10);
+  const securePassword = await bcrypt.hash(password, saltRounds);
   const uuid = uuidV4();
   const now = new Date();
   const createdAt = now
@@ -37,7 +39,7 @@ async function insertUserIntoDatabase(email, password) {
 
 /**
  * @param {String} uuid
- * @param {String} verificationCode
+ * @return {String} verificationCode
  */
 async function addVerificationCode(uuid) {
   const verificationCode = uuidV4();
@@ -60,6 +62,29 @@ async function addVerificationCode(uuid) {
   return verificationCode;
 }
 
+async function createUserProfile(uuid) {
+  const userProfileData = {
+    uuid,
+    friends: [],
+    avatarURL: null,
+    fullName: null,
+    preferences: {
+      isPublicProfile: false,
+      linkedIn: null,
+      twitter: null,
+      github: null,
+      description: null,
+    },
+  };
+
+  try {
+    const userCreated = await UserModel.create(userProfileData);
+    console.log(userCreated);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 /**
  * Send an email with a verification link to the user to activate the account
  * @param {String} userEmail
@@ -70,7 +95,7 @@ async function sendEmailRegistration(userEmail, verificationCode) {
   const msg = {
     to: userEmail,
     from: {
-      email: 'socialnetwork@yopmail.com',
+      email: process.env.SENDGRID_FROM,
       name: 'Social Network :)',
     },
     subject: 'Welcome to Hack a Bos Social Network',
@@ -128,6 +153,8 @@ async function create(req, res, next) {
      */
     const uuid = await insertUserIntoDatabase(email, password);
     res.status(204).json();
+
+    await createUserProfile(uuid);
 
     /**
      * Generate verification code and send email

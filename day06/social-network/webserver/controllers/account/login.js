@@ -32,6 +32,7 @@ async function login(req, res) {
     const sqlQuery = `SELECT email, password, uuid, activated_at FROM users WHERE email = '${
       accountData.email
     }'`;
+
     const [result] = await connection.query(sqlQuery);
     connection.release();
     if (result.length === 1) {
@@ -46,14 +47,18 @@ async function login(req, res) {
         uuid: userData.uuid,
         role: 'admin',
       };
-      const token = jwt.sign(payloadJWT, process.env.AUTH_JW_SECRET, {
-        expiresIn: 60,
+      const jwtTokenExpiration = parseInt(
+        process.env.AUTH_ACCESS_TOKEN_TTL,
+        10
+      );
+      const token = jwt.sign(payloadJWT, process.env.AUTH_JWT_SECRET, {
+        expiresIn: jwtTokenExpiration,
       });
       const response = {
         accessToken: token,
-        expiresIn: 60,
+        expiresIn: jwtTokenExpiration,
       };
-      return res.status(200).send(response);
+      return res.json(response);
     }
     return res.status(404).send();
   } catch (e) {
