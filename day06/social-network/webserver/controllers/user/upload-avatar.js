@@ -10,10 +10,10 @@ const apiSecret = process.env.CLOUDINARY_API_SECRET;
 cloudinary.config({
   cloud_name: cloudName,
   api_key: apiKey,
-  api_secret: apiSecret
+  api_secret: apiSecret,
 });
 
-async function uploadAvatar(req, res, next) {
+async function uploadAvatar(req, res) {
   const { uuid } = req.claims;
   const { file } = req;
 
@@ -29,18 +29,18 @@ async function uploadAvatar(req, res, next) {
         width: 200,
         height: 200,
         format: 'jpg',
-        crop: 'limit'
+        crop: 'limit',
       },
-      async (err, result) => {
+      async(err, result) => {
         if (err) {
           console.error('hubo error', err);
           return res.status(400).send(err);
         }
 
-        const { etag, secure_url: secureUrl } = result;
+        const { secure_url: secureUrl } = result;
 
         const updateUserProfile = {
-          avatarUrl: secureUrl
+          avatarUrl: secureUrl,
         };
 
         try {
@@ -54,6 +54,7 @@ async function uploadAvatar(req, res, next) {
       }
     )
     .end(file.buffer);
+  return null;
 }
 
 module.exports = uploadAvatar;
