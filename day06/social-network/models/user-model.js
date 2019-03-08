@@ -22,6 +22,13 @@ const userSchema = new Schema({
   __v: { type: Number, select: false },
 });
 
+userSchema.index({
+  fullName: 'text',
+  'preferences.linkedIn': 'text',
+  'preferences.github': 'text',
+  'preferences.twitter': 'text',
+});
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

@@ -8,15 +8,18 @@ const postSchema = new Schema({
   owner: String,
   author: String,
   content: String,
-  createdAt: Date,
+  likes: [String],
   comments: [
     {
+      message: String,
+      createdAt: Date,
       author: String,
-      comment: String,
-      createdAt: String,
     },
   ],
-  likes: [String],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
   deletedAt: Date,
   __v: { type: Number, select: false },
 });
