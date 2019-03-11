@@ -6,6 +6,15 @@ const httpServerConfig = require('./config/http-server-config');
 const mysqlPool = require('./databases/mysql-pool');
 const mongoPool = require('./databases/mongo-pool');
 
+process.on('uncaughtException', (err) => {
+  console.error('excepción inesperada', err.message, err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('Error inesperado', err.message, err);
+});
+
+
 /**
  * Initialize dependencies
  * */
