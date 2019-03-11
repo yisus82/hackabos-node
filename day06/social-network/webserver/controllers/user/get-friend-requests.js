@@ -2,19 +2,19 @@
 
 const UserModel = require('../../../models/user-model');
 
-async function getFriendRequests(req, res, next) {
+async function getFriendRequests(req, res) {
   const { uuid } = req.claims;
 
   /**
    * buscamos los ids de mis amigos / posibles amigos
    */
   const filter = {
-    uuid
+    uuid,
   };
 
   const projection = {
     friends: 1,
-    _id: 0
+    _id: 0,
   };
 
   try {
@@ -23,20 +23,20 @@ async function getFriendRequests(req, res, next) {
 
     const filterFriendsData = {
       uuid: {
-        $in: friendsUuids
-      }
+        $in: friendsUuids,
+      },
     };
 
     const projectionFriendsData = {
       uuid: 1,
       avatarUrl: 1,
       fullName: 1,
-      _id: 0
+      _id: 0,
     };
 
     const users = await UserModel.find(filterFriendsData, projectionFriendsData).lean();
     return res.send({
-      data: users
+      data: users,
     });
   } catch (e) {
     return res.status(500).send(e.message);

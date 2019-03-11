@@ -14,7 +14,6 @@ process.on('unhandledRejection', (err) => {
   console.error('Error inesperado', err.message, err);
 });
 
-
 /**
  * Initialize dependencies
  * */

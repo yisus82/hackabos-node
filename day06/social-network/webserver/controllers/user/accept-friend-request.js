@@ -6,8 +6,8 @@ const UserModel = require('../../../models/user-model');
 async function validate(payload) {
   const schema = {
     uuid: Joi.string().guid({
-      version: ['uuidv4']
-    })
+      version: ['uuidv4'],
+    }),
   };
 
   return Joi.validate(payload, schema);
@@ -20,7 +20,7 @@ async function addConfirmedFriend(friend, me) {
    *  - Falta poner a MIGUEL (me) en el listado de amigos de jose (friend uuid)
    */
   const filter = {
-    uuid: friend
+    uuid: friend,
   };
 
   const now = Date.now();
@@ -31,9 +31,9 @@ async function addConfirmedFriend(friend, me) {
         uuid: me,
         confirmedAt: now,
         createdAt: now,
-        rejectedAt: null
-      }
-    }
+        rejectedAt: null,
+      },
+    },
   };
 
   await UserModel.findOneAndUpdate(filter, op);
@@ -43,9 +43,9 @@ async function addConfirmedFriend(friend, me) {
     $pull: {
       friends: {
         uuid: me,
-        confirmedAt: null
-      }
-    }
+        confirmedAt: null,
+      },
+    },
   };
 
   await UserModel.findOneAndUpdate(filter, deleteOp);
@@ -69,13 +69,13 @@ async function acceptFriendRequest(req, res, next) {
   const filter = {
     uuid: me,
     'friends.uuid': friendUuid,
-    'friends.confirmedAt': null
+    'friends.confirmedAt': null,
   };
 
   const op = {
     $set: {
-      'friends.$.confirmedAt': Date.now()
-    }
+      'friends.$.confirmedAt': Date.now(),
+    },
   };
 
   try {

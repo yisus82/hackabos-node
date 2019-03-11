@@ -2,6 +2,7 @@
 
 const Joi = require('joi');
 const PostModel = require('../../../models/post-model');
+const WallModel = require('../../../models/wall-model');
 
 async function validate(payload) {
   const schema = {
@@ -40,7 +41,20 @@ async function createPost(req, res) {
 
   try {
     const postCreated = await PostModel.create(data);
-    return res.status(201).send(postCreated);
+    try {
+      await WallModel.updateOne(
+        {
+          uuid,
+        },
+        {
+          $push: { posts: postCreated._id },
+        },
+        { upsert: true }
+      );
+      return res.status(201).send(postCreated);
+    } catch (e) {
+      return res.status(500).send(e.message);
+    }
   } catch (e) {
     return res.status(500).send(e.message);
   }

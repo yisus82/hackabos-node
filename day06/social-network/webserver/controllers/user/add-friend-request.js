@@ -6,8 +6,8 @@ const UserModel = require('../../../models/user-model');
 async function validate(payload) {
   const schema = {
     uuid: Joi.string().guid({
-      version: ['uuidv4']
-    })
+      version: ['uuidv4'],
+    }),
   };
 
   return Joi.validate(payload, schema);
@@ -42,10 +42,10 @@ async function addFriendRequest(req, res, next) {
     friends: {
       $not: {
         $elemMatch: {
-          uuid
-        }
-      }
-    }
+          uuid,
+        },
+      },
+    },
   };
 
   const op = {
@@ -54,9 +54,9 @@ async function addFriendRequest(req, res, next) {
         uuid,
         createdAt: Date.now(),
         confirmedAt: null,
-        rejectedAt: null
-      }
-    }
+        rejectedAt: null,
+      },
+    },
   };
 
   try {

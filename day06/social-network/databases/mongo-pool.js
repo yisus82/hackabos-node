@@ -8,6 +8,7 @@ const mongoURI = process.env.MONGO_URI;
 
 async function connect() {
   const connection = await mongoose.connect(mongoURI, {
+    useCreateIndex: true,
     useNewUrlParser: true,
   });
   return connection;
